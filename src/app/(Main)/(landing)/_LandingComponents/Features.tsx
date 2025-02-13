@@ -50,8 +50,8 @@ export default function Features() {
       {features.map(({ icon: Icon, title, description }, idx) => (
         <Card className="p-4 lg:p-6" key={idx}>
           <Icon className="mb-4 size-12 text-primary" />
-          <h3 className="mb-2 text-xl font-semibold">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
+          <h3 className="mb-2 text-base font-semibold lg:text-xl">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </Card>
       ))}
     </motion.section>

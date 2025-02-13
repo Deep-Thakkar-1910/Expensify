@@ -16,7 +16,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String        @id
   name          String
   email         String
   emailVerified Boolean
@@ -25,6 +25,9 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  userAccounts  UserAccount[]
+  Budget        Budget[]
+  Transaction   Transaction[]
 
   @@unique([email])
   @@map("user")
@@ -46,11 +49,11 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String        @id
   accountId             String
   providerId            String
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -60,6 +63,7 @@ model Account {
   password              String?
   createdAt             DateTime
   updatedAt             DateTime
+  Transaction           Transaction[]
 
   @@map("account")
 }
@@ -73,4 +77,65 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model UserAccount {
+  id        String      @id
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  type      AccountType
+  balance   Decimal
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
+
+  @@index(type: Hash, fields: [type])
+  @@map("user_account")
+}
+
+model Budget {
+  id            String    @id
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount        Decimal
+  lastAlertSent DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+
+  @@map("budget")
+}
+
+model Transaction {
+  id            String          @id
+  userId        String
+  type          TransactionType
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId     String
+  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  amount        Decimal
+  date          DateTime
+  lastProcessed DateTime?
+  nextRecurring DateTime?
+  isRecurring   Boolean
+  receiptUrl    String?
+  status        String?
+  description   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now()) @updatedAt
+
+  @@index(type: Hash, fields: [type])
+  @@map("transaction")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+  SUBSCRIPTION
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+  INVESTMENT
 }

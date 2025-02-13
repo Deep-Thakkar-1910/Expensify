@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export default function Stats() {
   return (
@@ -42,13 +43,20 @@ export default function Stats() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="mb-8 text-4xl font-bold">Ready to Take Control?</h2>
-        <p className="mb-8 text-xl text-muted-foreground">
+        <h2 className="mb-8 px-4 text-center text-3xl font-bold lg:px-0 lg:text-4xl">
+          Ready to Take Control?
+        </h2>
+        <p className="mb-8 px-4 text-center text-muted-foreground lg:px-0 lg:text-xl">
           Join thousands of users who have transformed their financial
           management with Expensify.
         </p>
-        <Button size="lg" className="gap-2" variant={"outline"}>
-          Get Started Now <ArrowRight className="h-4 w-4" />
+        <Button size="lg" className="gap-2" asChild variant={"outline"}>
+          <Link
+            href={"/sign-in"}
+            className="flex items-center justify-center gap-2"
+          >
+            Get Started Now <ArrowRight className="size4" />
+          </Link>
         </Button>
       </motion.section>
     </>
