@@ -106,22 +106,23 @@ model Budget {
 }
 
 model Transaction {
-  id            String          @id
-  userId        String
-  type          TransactionType
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId     String
-  account       Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  amount        Decimal
-  date          DateTime
-  lastProcessed DateTime?
-  nextRecurring DateTime?
-  isRecurring   Boolean
-  receiptUrl    String?
-  status        String?
-  description   String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @default(now()) @updatedAt
+  id                String             @id
+  userId            String
+  type              TransactionType
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId         String
+  account           Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  amount            Decimal
+  date              DateTime
+  lastProcessed     DateTime?
+  nextRecurring     DateTime?
+  isRecurring       Boolean
+  recurringInterval RecurringInterval?
+  receiptUrl        String?
+  status            String?
+  description       String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @default(now()) @updatedAt
 
   @@index(type: Hash, fields: [type])
   @@map("transaction")
@@ -138,4 +139,10 @@ enum AccountType {
   CURRENT
   SAVINGS
   INVESTMENT
+}
+
+enum RecurringInterval {
+  DAILY
+  WEEKLY
+  MONTHLY
 }
