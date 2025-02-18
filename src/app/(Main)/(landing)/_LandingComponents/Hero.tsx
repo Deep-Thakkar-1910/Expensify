@@ -35,7 +35,7 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <h1 className="mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-4xl font-bold text-transparent md:text-4xl lg:text-6xl">
+        <h1 className="mb-6 bg-gradient-to-r from-fuchsia-700 to-blue-600 bg-clip-text text-4xl font-bold text-transparent md:text-4xl lg:text-6xl">
           Transform Your Expenses into Insights with AI
         </h1>
         <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">

@@ -80,21 +80,24 @@ model Verification {
 }
 
 model UserAccount {
-  id        String      @id
-  userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  type      AccountType
-  balance   Decimal
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @default(now()) @updatedAt
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  type         AccountType
+  isDefault    Boolean
+  transactions Transaction[]
+  balance      Decimal
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
 
+  @@unique([name])
   @@index(type: Hash, fields: [type])
   @@map("user_account")
 }
 
 model Budget {
-  id            String    @id
+  id            String    @id @default(cuid())
   userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount        Decimal
@@ -106,13 +109,14 @@ model Budget {
 }
 
 model Transaction {
-  id                String             @id
+  id                String             @id @default(cuid())
   userId            String
   type              TransactionType
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accountId         String
-  account           Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userAccountId     String
+  userAccount       UserAccount        @relation(fields: [userAccountId], references: [id], onDelete: Cascade)
   amount            Decimal
+  category          String
   date              DateTime
   lastProcessed     DateTime?
   nextRecurring     DateTime?
@@ -123,6 +127,8 @@ model Transaction {
   description       String
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @default(now()) @updatedAt
+  Account           Account?           @relation(fields: [accountId], references: [id])
+  accountId         String?
 
   @@index(type: Hash, fields: [type])
   @@map("transaction")

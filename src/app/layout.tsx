@@ -36,8 +36,9 @@ export default function RootLayout({
           duration={5000}
           position="bottom-right"
           closeButton
+          visibleToasts={5}
+          gap={2}
           richColors
-          dir="rtl"
           swipeDirections={["left", "right"]}
         />
       </body>

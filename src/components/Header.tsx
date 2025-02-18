@@ -20,7 +20,7 @@ export default function Header() {
       animate={{ opacity: 1, y: 0 }}
       className="fixed z-50 w-full border-b border-border/40 bg-white/45 backdrop-blur-sm"
     >
-      <nav className="mx-auto flex items-center justify-between px-4 py-4 lg:px-6 lg:py-6">
+      <nav className="mx-auto flex items-center justify-between px-4 py-4 lg:px-12 lg:py-6">
         <Link href="/" className="flex items-center gap-2">
           <PiggyBank className="size-8 text-primary" />
           <span className="text-xl font-bold lg:text-2xl">Expensify</span>
