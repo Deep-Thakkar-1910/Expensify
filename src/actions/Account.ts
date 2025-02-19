@@ -91,15 +91,51 @@ export const bulkDeleteTransactions = async (ids: string[]) => {
 
     if (!session?.user) throw new Error("Unauthorized");
 
-    const deleted = await db.transaction.deleteMany({
+    const transactions = await db.transaction.findMany({
       where: {
         id: {
           in: ids,
         },
       },
+      select: {
+        userAccountId: true,
+        amount: true,
+        type: true,
+      },
     });
 
+    if (transactions.length === 0) throw new Error("No transactions found");
+
+    const ammountToChange = transactions.reduce((acc: number, curr) => {
+      const value = curr.amount.toNumber();
+      return curr.type === "INCOME" ? acc - value : acc + value;
+    }, 0);
+
+    console.log("ammountToChange", ammountToChange);
+
+    const [deleted] = await db.$transaction([
+      db.transaction.deleteMany({
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+      }),
+
+      db.userAccount.update({
+        where: {
+          id: transactions[0].userAccountId,
+        },
+        data: {
+          balance: {
+            increment: ammountToChange,
+          },
+        },
+      }),
+    ]);
+
     if (deleted.count === ids.length) {
+      revalidatePath("/dashboard");
       revalidatePath(`/account/${session.user.id}`);
       return { success: true };
     } else {

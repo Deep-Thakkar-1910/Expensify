@@ -182,6 +182,7 @@ export function TransactionTable({ transactions }: { transactions: any[] }) {
       return;
 
     deleteFn(selectedIds);
+    setSelectedIds([]);
   };
 
   useEffect(() => {
@@ -383,7 +384,7 @@ export function TransactionTable({ transactions }: { transactions: any[] }) {
                         : "text-green-500",
                     )}
                   >
-                    {transaction.type === "EXPENSE" ? "-" : "+"}$
+                    {transaction.type === "EXPENSE" ? "-" : "+"}&#8377;
                     {transaction.amount.toFixed(2)}
                   </TableCell>
                   <TableCell>
@@ -445,7 +446,10 @@ export function TransactionTable({ transactions }: { transactions: any[] }) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => deleteFn([transaction.id])}
+                          onClick={() => {
+                            deleteFn([transaction.id]);
+                            setSelectedIds([]);
+                          }}
                         >
                           Delete
                         </DropdownMenuItem>
