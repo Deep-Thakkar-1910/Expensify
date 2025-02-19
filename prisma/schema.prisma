@@ -98,7 +98,7 @@ model UserAccount {
 
 model Budget {
   id            String    @id @default(cuid())
-  userId        String
+  userId        String    @unique
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount        Decimal
   lastAlertSent DateTime?

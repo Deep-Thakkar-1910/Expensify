@@ -2,11 +2,19 @@ import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import React from "react";
 import CreateAccountDrawer from "./CreateAccountDrawer";
-import { getUserAccounts } from "@/actions/Dashboard";
-import AccountCard from "./AccountCard";
 
-const AccountDisplay = async () => {
-  const accounts = await getUserAccounts();
+import AccountCard from "./AccountCard";
+import { UserAccount as PrismaUserAccount } from "@prisma/client";
+
+interface UserAccount extends Omit<PrismaUserAccount, "balance"> {
+  balance: number;
+}
+
+const AccountDisplay = async ({
+  accounts,
+}: {
+  accounts: UserAccount[] | undefined;
+}) => {
   return (
     <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-3">
       <CreateAccountDrawer>
@@ -19,8 +27,8 @@ const AccountDisplay = async () => {
           </CardDescription>
         </Card>
       </CreateAccountDrawer>
-      {(accounts?.userAccounts?.length as unknown as number) > 0 &&
-        accounts?.userAccounts?.map((account) => {
+      {(accounts?.length as unknown as number) > 0 &&
+        accounts?.map((account) => {
           return (
             <AccountCard
               key={account.id}
