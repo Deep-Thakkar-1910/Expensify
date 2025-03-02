@@ -137,8 +137,6 @@ model Transaction {
 enum TransactionType {
   INCOME
   EXPENSE
-  TRANSFER
-  SUBSCRIPTION
 }
 
 enum AccountType {

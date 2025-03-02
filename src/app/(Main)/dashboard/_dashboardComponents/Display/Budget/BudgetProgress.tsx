@@ -73,9 +73,9 @@ export function BudgetProgress({
   }, [error]);
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex-1">
+    <Card className="w-full">
+      <CardHeader className="flex w-full flex-row items-center justify-between space-y-0 pb-2">
+        <div className="w-full flex-1">
           <CardTitle className="text-sm font-medium">
             Monthly Budget (Default Account)
           </CardTitle>
@@ -112,9 +112,9 @@ export function BudgetProgress({
               <>
                 <CardDescription>
                   {initialBudget
-                    ? `$${currentExpenses.toFixed(
+                    ? `₹${currentExpenses.toFixed(
                         2,
-                      )} of $${initialBudget.amount.toFixed(2)} spent`
+                      )} of ₹${initialBudget.amount.toFixed(2)} spent`
                     : "No budget set"}
                 </CardDescription>
                 <Button
@@ -135,12 +135,13 @@ export function BudgetProgress({
           <div className="space-y-2">
             <Progress
               value={percentUsed}
-              className={cn(
-                "bg-gradient-to-r",
-                percentUsed >= 90 && "from-red-900 to-red-600",
-                percentUsed >= 75 && "bg-gr from-amber-600 to-amber-400",
-                percentUsed < 75 && "bg-green-500",
-              )}
+              className={` ${
+                percentUsed >= 90
+                  ? "bg-red-500"
+                  : percentUsed >= 75
+                    ? "bg-amber-300"
+                    : "bg-green-500"
+              }`}
             />
             <p className="text-right text-xs text-muted-foreground">
               {percentUsed.toFixed(1)}% used

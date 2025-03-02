@@ -103,14 +103,22 @@ export const getCurrentBudgetWithExpenses = async (userAccountId: string) => {
           lte: endDate,
         },
         userAccountId,
+        type: {
+          not: {
+            equals: "INCOME",
+          },
+        },
       },
       _sum: {
         amount: true,
       },
     });
 
-    const initialBudget = budget?.amount?.toNumber() ?? 0;
+    const initialBudget = budget
+      ? { ...budget, amount: budget.amount.toNumber() }
+      : null;
     const currentExpenses = transactionSum._sum.amount?.toNumber() ?? 0;
+    console.log("current expenses and budget", currentExpenses, initialBudget);
     return { success: true, initialBudget, currentExpenses };
   } catch (err) {
     if (err instanceof Error) {
