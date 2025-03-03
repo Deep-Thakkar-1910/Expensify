@@ -15,7 +15,7 @@ const AvatarDropdown = () => {
   const session = authClient.useSession();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="drop-shadow-md transition-transform duration-300 ease-linear hover:scale-110">
         <Avatar>
           <AvatarImage
             src={session?.data?.user?.image ?? undefined}

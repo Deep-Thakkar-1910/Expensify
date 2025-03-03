@@ -50,7 +50,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#ef4444", // red-500
     icon: "Home",
-    subcategories: ["Rent", "Mortgage", "Property Tax", "Maintenance"],
   },
   {
     id: "transportation",
@@ -58,7 +57,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#f97316", // orange-500
     icon: "Car",
-    subcategories: ["Fuel", "Public Transport", "Maintenance", "Parking"],
   },
   {
     id: "groceries",
@@ -73,7 +71,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#06b6d4", // cyan-500
     icon: "Zap",
-    subcategories: ["Electricity", "Water", "Gas", "Internet", "Phone"],
   },
   {
     id: "entertainment",
@@ -81,7 +78,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#8b5cf6", // violet-500
     icon: "Film",
-    subcategories: ["Movies", "Games", "Streaming Services"],
   },
   {
     id: "food",
@@ -96,7 +92,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#ec4899", // pink-500
     icon: "ShoppingBag",
-    subcategories: ["Clothing", "Electronics", "Home Goods"],
   },
   {
     id: "healthcare",
@@ -104,7 +99,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#14b8a6", // teal-500
     icon: "HeartPulse",
-    subcategories: ["Medical", "Dental", "Pharmacy", "Insurance"],
   },
   {
     id: "education",
@@ -112,7 +106,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#6366f1", // indigo-500
     icon: "GraduationCap",
-    subcategories: ["Tuition", "Books", "Courses"],
   },
   {
     id: "personal",
@@ -120,7 +113,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#d946ef", // fuchsia-500
     icon: "Smile",
-    subcategories: ["Haircut", "Gym", "Beauty"],
   },
   {
     id: "travel",
@@ -135,7 +127,6 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#64748b", // slate-500
     icon: "Shield",
-    subcategories: ["Life", "Home", "Vehicle"],
   },
   {
     id: "gifts",
@@ -150,7 +141,20 @@ export const defaultCategories = [
     type: "EXPENSE",
     color: "#fb7185", // rose-400
     icon: "Receipt",
-    subcategories: ["Bank Fees", "Late Fees", "Service Charges"],
+  },
+  {
+    id: "subscription",
+    name: "Subscription",
+    type: "EXPENSE",
+    color: "#fb2c15",
+    icon: "Repeat",
+  },
+  {
+    id: "transfer",
+    name: "Transfer",
+    type: "EXPENSE",
+    color: "#f1c482",
+    icon: "ArrowRight",
   },
   {
     id: "other-expense",

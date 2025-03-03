@@ -16,7 +16,6 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { updateOrCreateBudget } from "@/actions/Budget";
-import { cn } from "@/lib/utils";
 
 interface BudgetProgressProps {
   initialBudget: any;
@@ -135,7 +134,7 @@ export function BudgetProgress({
           <div className="space-y-2">
             <Progress
               value={percentUsed}
-              className={` ${
+              indicatorClassName={` ${
                 percentUsed >= 90
                   ? "bg-red-500"
                   : percentUsed >= 75

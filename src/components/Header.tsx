@@ -41,9 +41,9 @@ export default function Header() {
                 className="hidden items-center justify-center gap-2 lg:flex"
                 asChild
               >
-                <Link href={"/transaction"}>
+                <Link href={"/transaction-create"}>
                   <ReceiptIndianRupee />
-                  Transaction
+                  Add Transaction
                 </Link>
               </Button>
               {/* Mobile icons */}
@@ -58,7 +58,7 @@ export default function Header() {
                 asChild
                 size={"icon"}
               >
-                <Link href={"/transactions"}>
+                <Link href={"/transaction-create"}>
                   <ReceiptIndianRupee />
                 </Link>
               </Button>

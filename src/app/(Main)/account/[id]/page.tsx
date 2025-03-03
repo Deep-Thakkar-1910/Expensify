@@ -23,7 +23,7 @@ export default async function AccountPage({
     <div className="mx-auto max-w-screen-xl space-y-8 px-5 pb-10 pt-20 lg:pt-28">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="bg-gradient-to-tr from-fuchsia-600 to-blue-600 bg-clip-text text-5xl font-bold capitalize tracking-tight sm:text-6xl">
+          <h1 className="bg-gradient-to-r from-fuchsia-700 to-blue-600 bg-clip-text text-5xl font-bold capitalize tracking-tight text-transparent sm:text-6xl">
             {account.name}
           </h1>
           <p className="text-muted-foreground">
