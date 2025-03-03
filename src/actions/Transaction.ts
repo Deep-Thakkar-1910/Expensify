@@ -70,3 +70,81 @@ const calucalateNextTransactionDate = (
       return date;
   }
 };
+
+export const GetInitialTransaction = async (transactionId: string) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const transaction = await db.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    return {
+      success: true,
+      transaction: { ...transaction, amount: transaction?.amount?.toNumber() },
+    };
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.stack);
+    }
+    throw err;
+  }
+};
+
+export const UpdateTransaction = async (
+  transactionId: string,
+  transactionData: any,
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) throw new Error("Unauthorized");
+
+    if (!transactionData) throw new Error("Transaction data is required");
+
+    const [transaction] = await db.$transaction([
+      db.transaction.update({
+        where: {
+          id: transactionId,
+        },
+        data: {
+          ...transactionData,
+          nextRecurring: calucalateNextTransactionDate(
+            new Date(transactionData.date),
+            transactionData.recurringInterval,
+          ),
+        },
+      }),
+      db.userAccount.update({
+        where: {
+          id: transactionData.userAccountId,
+        },
+        data: {
+          balance: {
+            increment:
+              transactionData.type === "INCOME"
+                ? transactionData.amount
+                : -transactionData.amount,
+          },
+        },
+      }),
+    ]);
+    revalidatePath("/dashboard");
+    revalidatePath(`/account/${transactionData.userAccountId}`);
+    return {
+      success: true,
+      transaction: { ...transaction, amount: transaction.amount.toNumber() },
+    };
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.stack);
+    }
+    throw err;
+  }
+};

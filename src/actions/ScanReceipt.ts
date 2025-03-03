@@ -23,7 +23,7 @@ export const ScanReceipt = async (fileFormData: FormData) => {
       - Date (in ISO format)
       - Description or items purchased (brief summary)
       - Merchant/store name
-      - Suggested category (one of: Housing,Transportation,Groceries,Utilities,Entertainment,Food,Shopping,Healthcare,Education,Personal,Travel,Insurance,Gifts,Bills,Other-expense )
+      - Suggested category (one of: housing,transportation,groceries,ttilities,entertainment,food,shopping,healthcare,education,personal,travel,insurance,gifts,bills,transfer,subscription,other-expense )
       
       Only respond with valid JSON in this exact format:
       {

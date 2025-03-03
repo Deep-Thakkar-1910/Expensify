@@ -36,17 +36,23 @@ import { useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ReceiptScanner } from "./ReceiptScanner";
 import { toast } from "sonner";
-import { CreateTransaction } from "@/actions/Transaction";
+import { CreateTransaction, UpdateTransaction } from "@/actions/Transaction";
 import { useRouter } from "next/navigation";
 
 interface TransactionFormProps {
   accounts: Record<string, any>[];
   defaultCategories: Record<string, any>[];
+  editMode?: boolean;
+  initialData?: Record<string, any>;
+  transactionId?: string;
 }
 
 const TransactionForm = ({
   accounts,
   defaultCategories,
+  editMode,
+  initialData,
+  transactionId,
 }: TransactionFormProps) => {
   // state for filtering categories based on the type of transaction
   const [filteredCategories, setFilteredCategories] = useState<
@@ -55,19 +61,32 @@ const TransactionForm = ({
 
   const router = useRouter();
 
+  const defaultValues: Partial<TransactionSchemaType> = useMemo(() => {
+    if (editMode && initialData) {
+      return {
+        ...initialData,
+        amount: initialData.amount.toString(),
+        date: new Date(initialData.date).toISOString(),
+      };
+    }
+    return {
+      amount: "",
+      type: "EXPENSE",
+      description: "",
+      category: "",
+      userAccountId: "",
+      isRecurring: false,
+      recurringInterval: "DAILY",
+      date: new Date().toISOString(),
+    };
+  }, [editMode, initialData]);
+
   // date state for the transaction date
   const [date, setDate] = useState<Date>(new Date());
   const form = useForm<TransactionSchemaType>({
     resolver: zodResolver(transactionSchema),
     mode: "all",
-    defaultValues: {
-      date: new Date().toISOString(),
-      amount: "",
-      description: "",
-      isRecurring: false,
-      userAccountId: accounts.find((acc) => acc.isDefault)?.id,
-      category: "",
-    },
+    defaultValues,
   });
 
   const { control, handleSubmit, watch, setValue } = form;
@@ -108,10 +127,18 @@ const TransactionForm = ({
 
   const onSubmit: SubmitHandler<TransactionSchemaType> = async (data) => {
     try {
-      // creating the transaction based on received data
-      await CreateTransaction(data);
+      // creating the transaction based on received data or updating based on edit mode
+      if (editMode) {
+        await UpdateTransaction(transactionId as string, data);
+      } else {
+        await CreateTransaction(data);
+      }
       form.reset();
-      toast.success("Transaction created successfully");
+      if (editMode) {
+        toast.success("Transaction updated successfully");
+      } else {
+        toast.success("Transaction created successfully");
+      }
       router.push("/");
     } catch (err) {
       if (err instanceof Error) {
@@ -130,17 +157,7 @@ const TransactionForm = ({
       }
       if (scannedData.category) {
         setValue("type", "EXPENSE");
-        const category =
-          memoizedCategories.find((category) => {
-            if (
-              category.name
-                .toLowerCase()
-                .includes(scannedData.category.toLowerCase())
-            ) {
-              return true;
-            }
-          })?.name ?? ("Other Expenses" as string);
-        setValue("category", category);
+        setValue("category", scannedData.category);
       }
       toast.success("Receipt scanned successfully");
     }
@@ -152,7 +169,7 @@ const TransactionForm = ({
         onSubmit={handleSubmit(onSubmit)}
         className="mb-6 flex w-full max-w-lg flex-col space-y-4 rounded-lg border px-6 py-4"
       >
-        <ReceiptScanner onScanComplete={handleScanComplete} />
+        {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
         <div className="flex items-center justify-between gap-2">
           <FormField
             control={control}
@@ -216,7 +233,7 @@ const TransactionForm = ({
                 </FormControl>
                 <SelectContent>
                   {filteredCategories.map((category) => (
-                    <SelectItem key={category.id} value={category.name}>
+                    <SelectItem key={category.id} value={category.id}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -339,15 +356,27 @@ const TransactionForm = ({
           />
         )}
 
-        <Button type="submit" className="w-full">
-          {form.formState.isSubmitting ? (
-            <div className="flex items-center justify-center gap-2">
-              <Loader className="size-5 animate-spin" /> Creating Transaction
-            </div>
-          ) : (
-            "Create Transaction"
-          )}
-        </Button>
+        {editMode ? (
+          <Button type="submit" className="w-full">
+            {form.formState.isSubmitting ? (
+              <div className="flex items-center justify-center gap-2">
+                <Loader className="size-5 animate-spin" /> Updating Transaction
+              </div>
+            ) : (
+              "Update Transaction"
+            )}
+          </Button>
+        ) : (
+          <Button type="submit" className="w-full">
+            {form.formState.isSubmitting ? (
+              <div className="flex items-center justify-center gap-2">
+                <Loader className="size-5 animate-spin" /> Creating Transaction
+              </div>
+            ) : (
+              "Create Transaction"
+            )}
+          </Button>
+        )}
       </form>
     </Form>
   );

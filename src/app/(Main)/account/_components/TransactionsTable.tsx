@@ -437,7 +437,7 @@ export function TransactionTable({ transactions }: { transactions: any[] }) {
                         <DropdownMenuItem
                           onClick={() =>
                             router.push(
-                              `/transaction/create?edit=${transaction.id}`,
+                              `/transaction-create?edit=${transaction.id}`,
                             )
                           }
                         >
