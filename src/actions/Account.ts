@@ -111,8 +111,6 @@ export const bulkDeleteTransactions = async (ids: string[]) => {
       return curr.type === "INCOME" ? acc - value : acc + value;
     }, 0);
 
-    console.log("ammountToChange", ammountToChange);
-
     const [deleted] = await db.$transaction([
       db.transaction.deleteMany({
         where: {
