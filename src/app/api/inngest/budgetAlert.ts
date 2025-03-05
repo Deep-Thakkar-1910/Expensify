@@ -1,7 +1,7 @@
 import db from "@/lib/prisma";
 import { inngest } from "./inggest-client";
 import { sendEmail } from "@/actions/send-email";
-import EmailTemplate from "@/lib/emailTemplate";
+import EmailTemplate from "../../../../emails/emailTemplate";
 export const budgetAlert = inngest.createFunction(
   {
     id: "Cron For Budget Alert",
@@ -61,6 +61,7 @@ export const budgetAlert = inngest.createFunction(
             body: EmailTemplate({
               type: "budget-alert",
               userName: defaultAccount.name,
+              redirectUrl: `${process.env.BASE_HOME_PATH}/account/${defaultAccount.id}`,
               data: {
                 percentUsed,
                 budgetAmount: parseInt(budget.amount as string).toFixed(1),

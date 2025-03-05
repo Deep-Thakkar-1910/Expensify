@@ -5,6 +5,7 @@ import {
   processRecurringTransaction,
   triggerReccurringTransactions,
 } from "./recurringTransactions";
+import { generateMonthlyReports } from "./monthlyReports";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
@@ -13,5 +14,6 @@ export const { GET, POST, PUT } = serve({
     budgetAlert,
     triggerReccurringTransactions,
     processRecurringTransaction,
+    generateMonthlyReports,
   ],
 });

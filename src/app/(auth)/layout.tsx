@@ -11,7 +11,7 @@ export default function AuthLayout({
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight">Expensify</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Track. Budget. Save.
+            Track, Save, and Spend Smarter!
           </p>
         </div>
         {children}
