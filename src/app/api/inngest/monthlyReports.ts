@@ -97,7 +97,7 @@ const getMonthlyStats = async (
   const transactions = await db.transaction.findMany({
     where: {
       userId,
-      createdAt: {
+      date: {
         gte: previousMonthStart,
         lte: previousMonthEnd,
       },

@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expensify - Budget & Expense Tracking Web App
 
-## Getting Started
+Expensify is a budget and expense tracking application designed to help users manage their finances effectively. It includes AI-powered receipt scanning, budget tracking with alerts, monthly spend analysis, and AI-generated financial insights via email.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **AI Receipt Scanning**: Upload receipts and let AI extract expense details.
+- **Budget Tracking & Alerts**: Set budgets and receive alerts when approaching limits.
+- **Monthly Spend Analysis**: Gain insights into your spending habits.
+- **AI Insights Report**: Get personalized financial insights sent via email.
+- **Secure Authentication**: Powered by BetterAuth.
+- **Event-driven Processing**: Uses Inngest for background task handling.
+- **Optimized UI**: Built with TailwindCSS for a sleek and responsive design.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend**: Next.js (App Router)
+- **Backend**: Next.js server actions
+- **Database**: Prisma with PostgreSQL
+- **Authentication**: BetterAuth
+- **Background Jobs**: Inngest
+- **Styling**: TailwindCSS
+- **Shield and bot protection + rate-limiting**: ArcJet
+- **AI Features**: Google Gemini API
+- **Language**: TypeScript
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Preconditions:
 
-## Learn More
+- Your machine should have nodejs version 20+ installed and bun installed.
 
-To learn more about Next.js, take a look at the following resources:
+## Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```sh
+   git clone https://github.com/yourusername/expensify.git
+   cd expensify
+   ```
 
-## Deploy on Vercel
+2. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```sh
+   bun install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Set up environment variables:
+
+   - Copy `.env.example` to `.env.local`
+   - Update the necessary environment variables such as database URL, authentication keys, and API keys.
+
+4. Apply database migrations:
+
+   ```sh
+   bunx prisma migrate dev
+   ```
+
+5. Start the development server:
+
+   ```sh
+   bun dev
+   ```
+
+6. Open the app in your browser:
+   ```
+   http://localhost:3000
+   ```

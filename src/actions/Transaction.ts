@@ -144,3 +144,28 @@ export const UpdateTransaction = async (
     throw err;
   }
 };
+
+export const getAllTransactions = async () => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const transactions = await db.transaction.findMany({
+      where: {
+        userId: session.user.id,
+      },
+    });
+    return transactions.map((transaction) => ({
+      ...transaction,
+      amount: transaction.amount.toNumber(),
+    }));
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.stack);
+    }
+    throw err;
+  }
+};

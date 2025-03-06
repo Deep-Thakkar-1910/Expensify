@@ -52,7 +52,6 @@ export const ScanReceipt = async (fileFormData: FormData) => {
 
     try {
       const data = JSON.parse(cleanedText);
-      console.log("Scanned receipt data:", data);
       return {
         amount: parseFloat(data.amount),
         date: new Date(data.date),

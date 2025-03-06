@@ -5,11 +5,10 @@ import { motion } from "motion/react";
 
 export default function GoogleButton() {
   const handleGoogleSignIn = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "google",
       callbackURL: "/dashboard",
     });
-    console.log(data);
   };
 
   return (
