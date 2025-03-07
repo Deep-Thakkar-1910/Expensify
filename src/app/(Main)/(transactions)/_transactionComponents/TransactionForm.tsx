@@ -74,7 +74,7 @@ const TransactionForm = ({
       type: "EXPENSE",
       description: "",
       category: "",
-      userAccountId: "",
+      userAccountId: accounts.find((acc) => acc.isDefault)?.id,
       isRecurring: false,
       recurringInterval: "DAILY",
       date: new Date().toISOString(),
