@@ -121,9 +121,5 @@ export const processRecurringTransaction = inngest.createFunction(
 
 // this function is for checking that the transaction is due or not.
 const transactionDue = (lastProcessed: Date | null, nextRecurring: Date) => {
-  if (!lastProcessed) {
-    // if the transaction has never been processed
-    return true;
-  }
-  return new Date() >= nextRecurring; // if the transaction date is passed it will return true meaning the transaction is past due
+  return new Date() >= nextRecurring; // only check if the transaction date is passed, regardless of lastProcessed
 };
