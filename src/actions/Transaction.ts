@@ -104,6 +104,24 @@ export const UpdateTransaction = async (
 
     if (!transactionData) throw new Error("Transaction data is required");
 
+    // Get the original transaction to calculate the balance difference
+    const originalTransaction = await db.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    if (!originalTransaction) throw new Error("Transaction not found");
+
+    // Calculate the difference between new and old amounts
+    const oldBalanceImpact = originalTransaction.type === "INCOME" 
+      ? originalTransaction.amount.toNumber() 
+      : -originalTransaction.amount.toNumber();
+    
+    const newBalanceImpact = transactionData.type === "INCOME"
+      ? transactionData.amount
+      : -transactionData.amount;
+    
+    const balanceDifference = newBalanceImpact - oldBalanceImpact;
+
     const [transaction] = await db.$transaction([
       db.transaction.update({
         where: {
@@ -123,10 +141,7 @@ export const UpdateTransaction = async (
         },
         data: {
           balance: {
-            increment:
-              transactionData.type === "INCOME"
-                ? transactionData.amount
-                : -transactionData.amount,
+            increment: balanceDifference,
           },
         },
       }),
