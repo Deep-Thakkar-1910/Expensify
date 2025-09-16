@@ -6,6 +6,7 @@ import { aj } from "@/lib/arcjet";
 import { request } from "@arcjet/next";
 import { headers } from "next/headers";
 import { calucalateNextTransactionDate } from "@/lib/utils";
+import { Prisma } from "@prisma/client";
 
 export const CreateTransaction = async (transactionData: any) => {
   // explicit any to avoid type errors for prisma query data
@@ -126,7 +127,7 @@ export const UpdateTransaction = async (
             increment:
               transactionData.type === "INCOME"
                 ? transactionData.amount
-                : -(transactionData.amount),
+                : -transactionData.amount,
           },
         },
       }),
@@ -145,6 +146,40 @@ export const UpdateTransaction = async (
   }
 };
 
+export const ChangeReccuringTransactionAmount = async (
+  transactionId: string,
+  {
+    amount,
+  }: {
+    amount: string;
+  },
+) => {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) throw new Error("Unauthorized");
+
+    const transaction = await db.transaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        amount: new Prisma.Decimal(amount),
+      },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/account/${transaction?.userAccountId}`);
+    return { success: true };
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err.stack);
+    }
+    throw err;
+  }
+};
 export const getAllTransactions = async () => {
   try {
     const session = await auth.api.getSession({

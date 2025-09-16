@@ -34,7 +34,7 @@ export default async function AccountPage({
 
         <div className="pb-2 text-right">
           <div className="text-xl font-bold sm:text-2xl">
-            ${parseFloat(account.balance.toString()).toFixed(2)}
+            &#8377;{parseFloat(account.balance.toString()).toFixed(2)}
           </div>
           <p className="text-sm text-muted-foreground">
             {account._count.transactions} Transactions

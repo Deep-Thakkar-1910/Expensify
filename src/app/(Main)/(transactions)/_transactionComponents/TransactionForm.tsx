@@ -36,13 +36,18 @@ import { useEffect, useState, useMemo } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ReceiptScanner } from "./ReceiptScanner";
 import { toast } from "sonner";
-import { CreateTransaction, UpdateTransaction } from "@/actions/Transaction";
+import {
+  ChangeReccuringTransactionAmount,
+  CreateTransaction,
+  UpdateTransaction,
+} from "@/actions/Transaction";
 import { useRouter } from "next/navigation";
 
 interface TransactionFormProps {
   accounts: Record<string, any>[];
   defaultCategories: Record<string, any>[];
   editMode?: boolean;
+  isChangeAmount?: boolean;
   initialData?: Record<string, any>;
   transactionId?: string;
 }
@@ -51,6 +56,7 @@ const TransactionForm = ({
   accounts,
   defaultCategories,
   editMode,
+  isChangeAmount,
   initialData,
   transactionId,
 }: TransactionFormProps) => {
@@ -129,14 +135,26 @@ const TransactionForm = ({
     try {
       // creating the transaction based on received data or updating based on edit mode
       if (editMode) {
-        const amountDifference  = data.type === "INCOME" ? parseFloat(data?.amount) - parseFloat(initialData?.amount) : (parseFloat(initialData?.amount) - parseFloat(data.amount))
-        await UpdateTransaction(transactionId as string, {...data,amount: amountDifference || 0 });
+        const amountDifference =
+          data.type === "INCOME"
+            ? parseFloat(data?.amount) - parseFloat(initialData?.amount)
+            : parseFloat(initialData?.amount) - parseFloat(data.amount);
+        await UpdateTransaction(transactionId as string, {
+          ...data,
+          amount: amountDifference || 0,
+        });
+      } else if (isChangeAmount) {
+        await ChangeReccuringTransactionAmount(transactionId as string, {
+          amount: data.amount,
+        });
       } else {
         await CreateTransaction(data);
       }
       form.reset();
       if (editMode) {
         toast.success("Transaction updated successfully");
+      } else if (isChangeAmount) {
+        toast.success("Recurring transaction amount changed successfully");
       } else {
         toast.success("Transaction created successfully");
       }
@@ -170,203 +188,228 @@ const TransactionForm = ({
         onSubmit={handleSubmit(onSubmit)}
         className="mb-6 flex w-full max-w-lg flex-col space-y-4 rounded-lg border px-6 py-4"
       >
-        {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
-        <div className="flex items-center justify-between gap-2">
-          <FormField
-            control={control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input placeholder="0" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name="type"
-            render={({ field }) => (
-              <FormItem className="w-1/2">
-                <FormLabel>Type</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="INCOME">Income</SelectItem>
-                    <SelectItem value="EXPENSE">Expense</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        {!editMode && !isChangeAmount && (
+          <ReceiptScanner onScanComplete={handleScanComplete} />
+        )}
+
+        {/* Amount field - always shown */}
         <FormField
           control={control}
-          name="description"
+          name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input placeholder="Enter Description" {...field} />
+                <Input placeholder="0" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {filteredCategories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
-        <FormItem className="flex w-fit flex-col gap-2">
-          <FormLabel>Transaction Date</FormLabel>
-          <FormControl>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[200px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground",
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? (
-                    format(date, "dd-MMM-yyyy")
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown"
-                  selected={date}
-                  onSelect={(currentDate: Date | undefined) => {
-                    if (currentDate) {
-                      setDate(currentDate);
-                      form.setValue("date", currentDate.toISOString());
-                    }
-                  }}
-                  fromDate={new Date("2024-01-01")}
-                  toDate={new Date()}
-                />
-              </PopoverContent>
-            </Popover>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-        <FormField
-          control={control}
-          name="userAccountId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Account</FormLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Account" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {account.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Show all other fields only when isChangeAmount is false */}
+        {!isChangeAmount && (
+          <>
+            <FormField
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="w-1/2">
+                  <FormLabel>Type</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="INCOME">Income</SelectItem>
+                      <SelectItem value="EXPENSE">Expense</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={control}
-          name="isRecurring"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-              <div className="space-y-0.5">
-                <FormLabel>Recurring Transaction</FormLabel>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    form.setValue("isRecurring", value);
-                    if (!value) {
-                      form.setValue("recurringInterval", undefined);
-                    }
-                  }}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        {isRecurring && (
-          <FormField
-            control={control}
-            name="recurringInterval"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Interval</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange}>
+            <FormField
+              control={control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Interval" />
-                    </SelectTrigger>
+                    <Input placeholder="Enter Description" {...field} />
                   </FormControl>
-                  <SelectContent>
-                    <SelectItem value="DAILY">Daily</SelectItem>
-                    <SelectItem value="WEEKLY">Weekly</SelectItem>
-                    <SelectItem value="MONTHLY">Monthly</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filteredCategories.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormItem className="flex w-fit flex-col gap-2">
+              <FormLabel>Transaction Date</FormLabel>
+              <FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[200px] justify-start text-left font-normal",
+                        !date && "text-muted-foreground",
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? (
+                        format(date, "dd-MMM-yyyy")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      captionLayout="dropdown"
+                      selected={date}
+                      onSelect={(currentDate: Date | undefined) => {
+                        if (currentDate) {
+                          setDate(currentDate);
+                          form.setValue("date", currentDate.toISOString());
+                        }
+                      }}
+                      fromDate={new Date("2024-01-01")}
+                      toDate={new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+
+            <FormField
+              control={control}
+              name="userAccountId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Account</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Account" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {accounts.map((account) => (
+                        <SelectItem key={account.id} value={account.id}>
+                          {account.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="isRecurring"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Recurring Transaction</FormLabel>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(value) => {
+                        form.setValue("isRecurring", value);
+                        if (!value) {
+                          form.setValue("recurringInterval", undefined);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {isRecurring && (
+              <FormField
+                control={control}
+                name="recurringInterval"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Interval</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Interval" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="DAILY">Daily</SelectItem>
+                        <SelectItem value="WEEKLY">Weekly</SelectItem>
+                        <SelectItem value="MONTHLY">Monthly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
-          />
+          </>
         )}
 
         {editMode ? (
-          <Button type="submit" className="w-full">
-            {form.formState.isSubmitting ? (
-              <div className="flex items-center justify-center gap-2">
-                <Loader className="size-5 animate-spin" /> Updating Transaction
-              </div>
-            ) : (
-              "Update Transaction"
-            )}
-          </Button>
+          isChangeAmount ? (
+            <Button type="submit" className="w-full">
+              {form.formState.isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader className="size-5 animate-spin" /> Changing Recurring
+                  Amount
+                </div>
+              ) : (
+                "Change Recurring Amount"
+              )}
+            </Button>
+          ) : (
+            <Button type="submit" className="w-full">
+              {form.formState.isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader className="size-5 animate-spin" /> Updating
+                  Transaction
+                </div>
+              ) : (
+                "Update Transaction"
+              )}
+            </Button>
+          )
         ) : (
           <Button type="submit" className="w-full">
             {form.formState.isSubmitting ? (

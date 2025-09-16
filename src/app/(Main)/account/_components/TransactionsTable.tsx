@@ -434,18 +434,17 @@ export function TransactionTable({ transactions }: { transactions: any[] }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        {
-                          transaction.isRecurring &&
+                        {transaction.isRecurring && (
                           <DropdownMenuItem
-                          onClick={() =>
-                            router.push(
-                              `/transaction-create?edit=${transaction.id}`,
-                            )
-                          }
-                        >
-                          Change Recurring Amount
-                        </DropdownMenuItem>
-                        }
+                            onClick={() =>
+                              router.push(
+                                `/transaction-create?edit=${transaction.id}${transaction.isRecurring ? "&isChangeAmount=true" : ""}`,
+                              )
+                            }
+                          >
+                            Change Recurring Amount
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem
                           onClick={() =>
                             router.push(

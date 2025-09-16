@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 const CreateTransactionPage = async ({
   searchParams,
 }: {
-  searchParams: { edit: string };
+  searchParams: { edit: string; isChangeAmount: string | undefined };
 }) => {
-  const { edit } = await searchParams;
+  const { edit, isChangeAmount } = await searchParams;
   const editMode = !!edit;
   const accounts = await getUserAccounts();
   let initialData;
@@ -30,6 +30,7 @@ const CreateTransactionPage = async ({
         accounts={accounts?.userAccounts || []}
         defaultCategories={defaultCategories}
         editMode={editMode}
+        isChangeAmount={isChangeAmount === "true"}
         initialData={initialData?.transaction}
         transactionId={edit}
       />
