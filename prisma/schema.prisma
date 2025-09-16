@@ -143,6 +143,7 @@ enum AccountType {
   CURRENT
   SAVINGS
   INVESTMENT
+  CREDIT
 }
 
 enum RecurringInterval {

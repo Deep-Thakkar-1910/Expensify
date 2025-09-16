@@ -126,7 +126,7 @@ export const UpdateTransaction = async (
             increment:
               transactionData.type === "INCOME"
                 ? transactionData.amount
-                : -transactionData.amount,
+                : -(transactionData.amount),
           },
         },
       }),

@@ -15,14 +15,9 @@ export const triggerReccurringTransactions = inngest.createFunction(
       return await db.transaction.findMany({
         where: {
           isRecurring: true,
-          OR: [
-            { lastProcessed: null },
-            {
               nextRecurring: {
                 lte: new Date(),
               },
-            },
-          ],
         },
       });
     });

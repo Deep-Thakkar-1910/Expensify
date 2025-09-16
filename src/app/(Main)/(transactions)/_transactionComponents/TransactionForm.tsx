@@ -129,7 +129,8 @@ const TransactionForm = ({
     try {
       // creating the transaction based on received data or updating based on edit mode
       if (editMode) {
-        await UpdateTransaction(transactionId as string, data);
+        const amountDifference  = data.type === "INCOME" ? parseFloat(data?.amount) - parseFloat(initialData?.amount) : (parseFloat(initialData?.amount) - parseFloat(data.amount))
+        await UpdateTransaction(transactionId as string, {...data,amount: amountDifference || 0 });
       } else {
         await CreateTransaction(data);
       }
