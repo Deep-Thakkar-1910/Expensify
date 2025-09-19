@@ -111,6 +111,7 @@ const AccountForm = ({ setIsOpen }: AccountFormProps) => {
                   <SelectItem value="SAVINGS">Savings</SelectItem>
                   <SelectItem value="CURRENT">Current</SelectItem>
                   <SelectItem value="INVESTMENT">Investment</SelectItem>
+                  <SelectItem value="CREDIT">CREDIT</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
