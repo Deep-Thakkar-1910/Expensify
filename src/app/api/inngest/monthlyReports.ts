@@ -136,7 +136,7 @@ const getAiInsights = async (
       process.env.GOOGLE_GENERATIVE_AI_API_KEY as string,
     );
 
-    const model = await ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = await ai.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `Analyze this financial data and provide 3 concise, actionable insights.
     Focus on spending patterns and practical advice.
