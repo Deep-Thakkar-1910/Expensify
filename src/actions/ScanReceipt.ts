@@ -6,7 +6,7 @@ export const ScanReceipt = async (fileFormData: FormData) => {
       process.env.GOOGLE_GENERATIVE_AI_API_KEY as string,
     );
 
-    const model = await genAi.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = await genAi.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const file: File = fileFormData.get("receipt") as File;
 
